@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+    id 'application'  // Add this if you want to run the main class
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.2'
+}
+
+application {
+    mainClass = 'me.lrnzx.csv.CSVExpressionEvaluationExample'
+}
+
