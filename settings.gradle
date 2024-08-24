@@ -1,2 +1,2 @@
 rootProject.name = 'csvfilter-project'
-include 'csv-core', 'csv-api'
+include ':csv-core'
