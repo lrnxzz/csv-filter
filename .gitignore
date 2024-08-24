@@ -1,42 +1,53 @@
-.gradle
+# Ignore Gradle build files
+.gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+# Ignore Gradle wrapper files
+gradle/wrapper/gradle-wrapper.properties
+gradle/wrapper/gradle-wrapper.jar
+
+# Ignore Eclipse files
+.classpath
+.project
+.settings/
+
+# Ignore IntelliJ IDEA project files
+.idea/
 *.iws
 *.iml
 *.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Ignore logs
+*.log
 
-### VS Code ###
+# Ignore temporary files
+*.tmp
+*.swp
+*~.nib
+
+# Ignore compiled class files
+*.class
+
+# Ignore jar and war files
+*.jar
+*.war
+
+# Ignore Maven specific files (in case you have mixed Maven and Gradle)
+target/
+
+# Ignore generated files
+*.generated
+
+# Ignore user-specific settings
 .vscode/
 
-### Mac OS ###
-.DS_Store
+# Ignore any submodule's .git directories
+**/.git/
+
+# Ignore other potential files from various IDEs or build tools
+.idea_modules/
