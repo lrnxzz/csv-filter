@@ -33,7 +33,8 @@ public class CompositeNode implements ExpressionNode {
      */
     @Override
     public boolean evaluate(final Map<String, String> row) {
-        return new ExpressionNodeEvaluator().visit(this, row);
+        return new ExpressionNodeEvaluator()
+                .visit(this, row);
     }
 
     /**

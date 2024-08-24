@@ -19,7 +19,8 @@ public class ComparisonNodeTest {
     @MethodSource("provideComparisonScenarios")
     void testEvaluateWithVariousOperators(String field, ComparisonOperator operator, String value, Map<String, String> row, boolean expected) {
         final ComparisonNode node = new ComparisonNode(field, operator, value);
-        assertEquals(expected, node.evaluate(row));
+        assertEquals(expected, node
+                .evaluate(row));
     }
 
     private static Stream<Arguments> provideComparisonScenarios() {
