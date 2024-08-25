@@ -30,6 +30,15 @@ public class QueryOptimizer {
      * @return A simplified version of the node.
      */
     private ExpressionNode simplifyConstants(final ExpressionNode node) {
+        if (node instanceof NotNode) {
+            NotNode notNode = (NotNode) node;
+            ExpressionNode simplifiedChild = simplifyConstants(notNode.getChildNode());
+            if (simplifiedChild instanceof ConstantNode) {
+                return new ConstantNode(!((ConstantNode) simplifiedChild).getValue());
+            }
+            return new NotNode(simplifiedChild);
+        }
+
         if (node instanceof CompositeNode) {
             final CompositeNode compositeNode = (CompositeNode) node;
             final List<ExpressionNode> optimizedChildren = new ArrayList<>();

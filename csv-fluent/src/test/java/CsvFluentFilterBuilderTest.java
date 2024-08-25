@@ -2,6 +2,9 @@
 import me.lrnzx.csv.fluent.CsvFluentFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,5 +63,62 @@ public class CsvFluentFilterBuilderTest {
                         .and(CsvFluentFilter.where("name").contains("ren")));
         assertTrue(complexFilter.evaluate(erica), "Erica's name ends with 'a'");
         assertTrue(complexFilter.evaluate(lorenzo), "Lorenzo is older than 20 and his name contains 'ren'");
+    }
+
+    @Test
+    public void testBetweenFilter() {
+        CsvFluentFilter filter = CsvFluentFilter.where("price").between("10", "20");
+
+        Map<String, String> row1 = new HashMap<>();
+        row1.put("price", "15");
+
+        Map<String, String> row2 = new HashMap<>();
+        row2.put("price", "25");
+
+        assertTrue(filter.evaluate(row1));
+        assertFalse(filter.evaluate(row2));
+    }
+
+    @Test
+    public void testInListFilter() {
+        CsvFluentFilter filter = CsvFluentFilter.where("category").in(Arrays.asList("A", "B", "C"));
+
+        Map<String, String> row1 = new HashMap<>();
+        row1.put("category", "B");
+
+        Map<String, String> row2 = new HashMap<>();
+        row2.put("category", "D");
+
+        assertTrue(filter.evaluate(row1));
+        assertFalse(filter.evaluate(row2));
+    }
+
+    @Test
+    public void testCaseInsensitiveFilter() {
+        CsvFluentFilter filter = CsvFluentFilter.whereIgnoreCase("name").isEqualTo("John");
+
+        Map<String, String> row1 = new HashMap<>();
+        row1.put("name", "john");
+
+        Map<String, String> row2 = new HashMap<>();
+        row2.put("name", "Jane");
+
+        assertTrue(filter.evaluate(row1));
+        assertFalse(filter.evaluate(row2));
+    }
+
+    @Test
+    public void testDateFilter() {
+        CsvFluentFilter filter = CsvFluentFilter.where("date").asDate("yyyy-MM-dd")
+                .isBetween(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
+
+        Map<String, String> row1 = new HashMap<>();
+        row1.put("date", "2023-06-15");
+
+        Map<String, String> row2 = new HashMap<>();
+        row2.put("date", "2024-01-01");
+
+        assertTrue(filter.evaluate(row1));
+        assertFalse(filter.evaluate(row2));
     }
 }

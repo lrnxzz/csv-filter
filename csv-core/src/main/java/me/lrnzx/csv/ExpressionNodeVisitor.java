@@ -33,4 +33,10 @@ public interface ExpressionNodeVisitor<T> {
             final Map<String, String> row);
 
     T visit(ConstantNode node, Map<String, String> row);
+
+    T visit(BetweenNode node, Map<String, String> row);
+    T visit(InListNode node, Map<String, String> row);
+    T visit(DateBetweenNode node, Map<String, String> row);
+    T visit(CaseInsensitiveComparisonNode node, Map<String, String> row);
+    T visit(NotNode node, Map<String, String> row);
 }

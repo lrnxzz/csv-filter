@@ -8,7 +8,7 @@ public class ConstantNode implements ExpressionNode {
 
     private final boolean value;
 
-    private ConstantNode(boolean value) {
+    public ConstantNode(boolean value) {
         this.value = value;
     }
 

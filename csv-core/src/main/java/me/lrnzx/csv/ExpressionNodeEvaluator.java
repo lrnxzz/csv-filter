@@ -17,33 +17,11 @@ public class ExpressionNodeEvaluator implements ExpressionNodeVisitor<Boolean> {
      * @return true if the comparison evaluates to true, false otherwise.
      */
     @Override
-    public Boolean visit(final ComparisonNode node,
-                         final Map<String, String> row) {
-        final String fieldValue = row
-                .get(node.getField());
+    public Boolean visit(final ComparisonNode node, final Map<String, String> row) {
+        final String fieldValue = row.get(node.getField());
         if (fieldValue == null) return false;
 
-        switch (node.getOperator()) {
-            case EQUALS: return fieldValue
-                    .equals(node.getValue());
-            case NOT_EQUALS: return !fieldValue
-                    .equals(node.getValue());
-            case GREATER_THAN: return fieldValue
-                    .compareTo(node.getValue()) > 0;
-            case LESS_THAN: return fieldValue
-                    .compareTo(node.getValue()) < 0;
-            case GREATER_THAN_OR_EQUAL: return fieldValue
-                    .compareTo(node.getValue()) >= 0;
-            case LESS_THAN_OR_EQUAL: return fieldValue
-                    .compareTo(node.getValue()) <= 0;
-            case CONTAINS: return fieldValue
-                    .contains(node.getValue());
-            case STARTS_WITH: return fieldValue
-                    .startsWith(node.getValue());
-            case ENDS_WITH: return fieldValue
-                    .endsWith(node.getValue());
-            default: throw new IllegalArgumentException("Unknown operator: " + node.getOperator());
-        }
+        return node.getOperator().apply(fieldValue, node.getValue());
     }
 
     /**
@@ -76,5 +54,30 @@ public class ExpressionNodeEvaluator implements ExpressionNodeVisitor<Boolean> {
     @Override
     public Boolean visit(ConstantNode node, Map<String, String> row) {
         return node.getValue();
+    }
+
+    @Override
+    public Boolean visit(BetweenNode node, Map<String, String> row) {
+        return node.evaluate(row);
+    }
+
+    @Override
+    public Boolean visit(InListNode node, Map<String, String> row) {
+        return node.evaluate(row);
+    }
+
+    @Override
+    public Boolean visit(DateBetweenNode node, Map<String, String> row) {
+        return node.evaluate(row);
+    }
+
+    @Override
+    public Boolean visit(CaseInsensitiveComparisonNode node, Map<String, String> row) {
+        return node.evaluate(row);
+    }
+
+    @Override
+    public Boolean visit(NotNode node, Map<String, String> row) {
+        return !node.getChildNode().accept(this, row);
     }
 }
