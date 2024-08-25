@@ -72,4 +72,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeVisitor<Boolean> {
         }
         return result;
     }
+
+    @Override
+    public Boolean visit(ConstantNode node, Map<String, String> row) {
+        return node.getValue();
+    }
 }

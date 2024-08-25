@@ -31,4 +31,6 @@ public interface ExpressionNodeVisitor<T> {
      */
     T visit(final CompositeNode node,
             final Map<String, String> row);
+
+    T visit(ConstantNode node, Map<String, String> row);
 }

@@ -2,9 +2,6 @@ plugins {
     id 'java'
 }
 
-group = 'me.lrnzx'
-version = 'unspecified'
-
 repositories {
     mavenCentral()
 }
