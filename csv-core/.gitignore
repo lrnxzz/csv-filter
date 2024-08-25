@@ -1,0 +1,44 @@
+# Ignore Gradle build files
+.gradle/
+build/
+
+# Ignore Gradle wrapper files
+gradle/wrapper/gradle-wrapper.properties
+gradle/wrapper/gradle-wrapper.jar
+
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+*~.nib
+
+# Ignore compiled class files
+*.class
+
+# Ignore jar and war files
+*.jar
+*.war
+
+# Ignore generated files
+*.generated
+
+# Ignore user-specific settings
+.vscode/
+
+# Ignore Eclipse files (if applicable)
+.classpath
+.project
+.settings/

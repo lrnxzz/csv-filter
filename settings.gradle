@@ -1,2 +1,4 @@
 rootProject.name = 'csv-filter'
 include ':csv-core'
+include 'csv-fluent'
+
