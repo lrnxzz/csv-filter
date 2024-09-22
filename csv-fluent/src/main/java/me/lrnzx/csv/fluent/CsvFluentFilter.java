@@ -4,6 +4,7 @@ import me.lrnzx.csv.*;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.function.Function;
 
 /**
@@ -14,12 +15,10 @@ import java.util.function.Function;
 public class CsvFluentFilter {
 
     private final ExpressionNode root;
-    private boolean optimized = false;
 
     private CsvFluentFilter(ExpressionNode root) {
         this.root = root;
     }
-
 
     /**
      * Starts building a filter for a specified field.
@@ -70,7 +69,8 @@ public class CsvFluentFilter {
      * @return A new CsvFluentFilter instance with AND operation.
      */
     public CsvFluentFilter and(final CsvFluentFilter other) {
-        return combineWith(other, CompositeOperator.AND).optimize();
+        CsvFluentFilter combined = combineWith(other, CompositeOperator.AND);
+        return combined.optimize();
     }
 
     /**
@@ -80,7 +80,8 @@ public class CsvFluentFilter {
      * @return A new CsvFluentFilter instance with OR operation.
      */
     public CsvFluentFilter or(final CsvFluentFilter other) {
-        return combineWith(other, CompositeOperator.OR).optimize();
+        CsvFluentFilter combined = combineWith(other, CompositeOperator.OR);
+        return combined.optimize();
     }
 
     /**
@@ -89,7 +90,8 @@ public class CsvFluentFilter {
      * @return A new CsvFluentFilter instance with the negated condition.
      */
     public CsvFluentFilter not() {
-        return new CsvFluentFilter(new NotNode(this.root)).optimize();
+        CsvFluentFilter negated = new CsvFluentFilter(new NotNode(this.root));
+        return negated.optimize();
     }
 
     /**
@@ -99,14 +101,36 @@ public class CsvFluentFilter {
      * @return An optimized version of the current CsvFluentFilter.
      */
     public CsvFluentFilter optimize() {
-        if (!optimized) {
-            QueryOptimizer optimizer = new QueryOptimizer();
-            ExpressionNode optimizedRoot = optimizer.optimize(this.root);
-            optimized = true;
-            return new CsvFluentFilter(optimizedRoot);
-        }
-        return this;
+        QueryOptimizer optimizer = new QueryOptimizer();
+        ExpressionNode optimizedRoot = optimizer.optimize(this.root);
+        return new CsvFluentFilter(optimizedRoot);
     }
+
+    /**
+     * Checks if this filter is equal to another object.
+     * Two filters are equal if their root expressions are equal.
+     *
+     * @param obj The object to compare with.
+     * @return true if the filters are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof CsvFluentFilter)) return false;
+        CsvFluentFilter other = (CsvFluentFilter) obj;
+        return Objects.equals(this.root, other.root);
+    }
+
+    /**
+     * Returns the hash code for this filter.
+     *
+     * @return The hash code based on the root expression.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
+    }
+
     /**
      * Defines conditions for a specific field.
      */
@@ -225,7 +249,7 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the between condition.
          */
         public CsvFluentFilter between(final String lowerBound, final String upperBound) {
-            return new CsvFluentFilter(new BetweenNode(field, lowerBound, upperBound));
+            return new CsvFluentFilter(new BetweenNode(field, lowerBound, upperBound)).optimize();
         }
 
         /**
@@ -235,7 +259,7 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the in-list condition.
          */
         public CsvFluentFilter in(final List<String> values) {
-            return new CsvFluentFilter(new InListNode(field, values));
+            return new CsvFluentFilter(new InListNode(field, values)).optimize();
         }
 
         /**
@@ -267,7 +291,9 @@ public class CsvFluentFilter {
         }
 
         protected CsvFluentFilter createFilter(ComparisonOperator operator, String value) {
-            if (value == null && operator != ComparisonOperator.IS_NULL && operator != ComparisonOperator.IS_NOT_NULL) {
+            if (value == null &&
+                    operator != ComparisonOperator.IS_NULL &&
+                    operator != ComparisonOperator.IS_NOT_NULL) {
                 throw new IllegalArgumentException("Value cannot be null for operator: " + operator);
             }
             return new CsvFluentFilter(new ComparisonNode(field, operator, value)).optimize();
@@ -292,7 +318,11 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the after date condition.
          */
         public CsvFluentFilter isAfter(LocalDate date) {
-            return createFilter(ComparisonOperator.GREATER_THAN, date.format(formatter));
+            try {
+                return createFilter(ComparisonOperator.GREATER_THAN, date.format(formatter));
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format", e);
+            }
         }
 
         /**
@@ -302,7 +332,11 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the before date condition.
          */
         public CsvFluentFilter isBefore(LocalDate date) {
-            return createFilter(ComparisonOperator.LESS_THAN, date.format(formatter));
+            try {
+                return createFilter(ComparisonOperator.LESS_THAN, date.format(formatter));
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format", e);
+            }
         }
 
         /**
@@ -312,7 +346,11 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the on or after date condition.
          */
         public CsvFluentFilter isOnOrAfter(LocalDate date) {
-            return createFilter(ComparisonOperator.GREATER_THAN_OR_EQUAL, date.format(formatter));
+            try {
+                return createFilter(ComparisonOperator.GREATER_THAN_OR_EQUAL, date.format(formatter));
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format", e);
+            }
         }
 
         /**
@@ -322,7 +360,11 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the on or before date condition.
          */
         public CsvFluentFilter isOnOrBefore(LocalDate date) {
-            return createFilter(ComparisonOperator.LESS_THAN_OR_EQUAL, date.format(formatter));
+            try {
+                return createFilter(ComparisonOperator.LESS_THAN_OR_EQUAL, date.format(formatter));
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format", e);
+            }
         }
 
         /**
@@ -332,7 +374,11 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the on date condition.
          */
         public CsvFluentFilter isOn(LocalDate date) {
-            return createFilter(ComparisonOperator.EQUALS, date.format(formatter));
+            try {
+                return createFilter(ComparisonOperator.EQUALS, date.format(formatter));
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format", e);
+            }
         }
 
         /**
@@ -343,7 +389,13 @@ public class CsvFluentFilter {
          * @return A new CsvFluentFilter with the between dates condition.
          */
         public CsvFluentFilter isBetween(LocalDate start, LocalDate end) {
-            return new CsvFluentFilter(new DateBetweenNode(field, start, end, formatter));
+            try {
+                String startStr = start.format(formatter);
+                String endStr = end.format(formatter);
+                return new CsvFluentFilter(new BetweenNode(field, startStr, endStr)).optimize();
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format", e);
+            }
         }
     }
 
@@ -354,12 +406,21 @@ public class CsvFluentFilter {
      * @return A new FieldCondition that performs case-insensitive comparisons.
      */
     public static FieldCondition whereIgnoreCase(final String field) {
-        return new FieldCondition(field) {
-            @Override
-            protected CsvFluentFilter createFilter(ComparisonOperator operator, String value) {
-                return new CsvFluentFilter(new CaseInsensitiveComparisonNode(field, operator, value));
-            }
-        };
+        return new CaseInsensitiveFieldCondition(field);
+    }
+
+    /**
+     * Specialized field condition for case-insensitive comparisons.
+     */
+    public static class CaseInsensitiveFieldCondition extends FieldCondition {
+        public CaseInsensitiveFieldCondition(String field) {
+            super(field);
+        }
+
+        @Override
+        protected CsvFluentFilter createFilter(ComparisonOperator operator, String value) {
+            return new CsvFluentFilter(new CaseInsensitiveComparisonNode(field, operator, value)).optimize();
+        }
     }
 
     /**

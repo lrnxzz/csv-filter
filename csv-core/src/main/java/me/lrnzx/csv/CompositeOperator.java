@@ -6,5 +6,9 @@ package me.lrnzx.csv;
  * how the results of multiple child nodes should be combined.
  */
 public enum CompositeOperator {
-    AND, OR
+    AND, OR;
+
+    public CompositeOperator opposite() {
+        return this == AND ? OR : AND;
+    }
 }

@@ -25,7 +25,6 @@ public class InListNode implements ExpressionNode {
         return visitor.visit(this, row);
     }
 
-    // Getters
     public String getField() { return field; }
     public List<String> getValues() { return values; }
 }

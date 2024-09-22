@@ -35,4 +35,15 @@ public enum ComparisonOperator {
     public boolean apply(String a, String b) {
         return predicate.test(a, b);
     }
+
+    /**
+     * Determines if this operator is a range operator.
+     *
+     * @return true if the operator is GREATER_THAN, GREATER_THAN_OR_EQUAL,
+     *         LESS_THAN, or LESS_THAN_OR_EQUAL; false otherwise.
+     */
+    public boolean isRangeOperator() {
+        return this == GREATER_THAN || this == GREATER_THAN_OR_EQUAL
+                || this == LESS_THAN || this == LESS_THAN_OR_EQUAL;
+    }
 }
